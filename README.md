@@ -1,13 +1,13 @@
 # AnalystAI
 
-### An AI agent that analyzes your data like a human analyst would, autonomously.
+### An AI agent that analyzes your data like a human analyst would, on its own.
 
-Upload a messy spreadsheet. Get back cleaned data, genuine insights (not just summary stats), charts, a written executive summary, and a downloadable report, with a second AI agent independently fact-checking every finding before you see it. No prompting required.
+Upload a messy spreadsheet. Get back clean data, real insights, charts, a written summary, and a downloadable report, with no prompting needed. A second AI agent checks every finding before you see it, so you're not just trusting one model's guess.
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
 ![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-6E56CF)
 ![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?logo=react&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 
 [Live Demo](#) &nbsp;·&nbsp; [How It Works](#how-it-works) &nbsp;·&nbsp; [Setup](#getting-started) &nbsp;·&nbsp; [Architecture](#architecture)
 
@@ -16,107 +16,107 @@ Upload a messy spreadsheet. Get back cleaned data, genuine insights (not just su
 ## See It In Action
 
 ![Dashboard placeholder](docs/screenshots/dashboard.png)
-*Dashboard: dataset overview, auto-generated insight cards, and executive summary, all produced without a human writing a single query.*
+*The dashboard: dataset overview, insight cards, and an executive summary, all generated automatically.*
 
 ![Chat placeholder](docs/screenshots/chat.png)
-*Ask follow-up questions in plain English. The same agent pipeline writes and runs the code live.*
+*Ask follow-up questions in plain English. The same AI pipeline writes and runs the code live to answer.*
 
-> **Note for reviewers:** the three images above are placeholders. Swap in real screenshots at `docs/screenshots/` with the same filenames and they'll appear automatically.
+> **Note for reviewers:** the images above are placeholders. Add real screenshots to `docs/screenshots/` using the same filenames and they'll show up here automatically.
 
 ---
 
 ## Why This Project Is Different
 
-Most "chat with your data" tools just ask an LLM the question and print whatever it says back. That's a guess dressed up as an answer.
+Most "chat with your data" tools just ask an AI model the question and print whatever it says back. That's a guess, not an answer.
 
-**AnalystAI never trusts an LLM's arithmetic.** Every quantitative claim is answered by LLM-*written* Python code that actually executes against the real dataset, and every one of those results then goes through a second, independent AI agent whose entire job is to catch wrong answers before they reach the user, even when the code ran perfectly and produced no error.
+AnalystAI doesn't trust an AI model's math. Every number in the report comes from Python code the AI writes and actually runs on your data. Then a second, independent AI agent checks that result before it ever reaches you, even when the code ran with no errors at all.
 
-That self-correction loop, not the charts or the PDF export, is the interesting engineering problem this project solves.
+That second check is the real engineering challenge this project solves, not the charts or the PDF export.
 
 ## Skills This Project Demonstrates
 
 | Area | What's in this repo |
 |---|---|
-| **Agentic AI / LLM orchestration** | 7 cooperating agents coordinated as a LangGraph state machine, with conditional routing and failure recovery |
-| **Self-correcting AI systems** | An independent Critic agent reviews and can reject/retry every AI-generated result |
-| **Systems reliability engineering** | 4-provider LLM failover, hard call budgets, graceful degradation instead of crashes |
-| **Secure code execution** | AST-level static analysis + sandboxed subprocess execution for all LLM-generated code |
-| **Full-stack delivery** | React/Vite/Tailwind frontend, Python backend, PDF report generation, vector-based session memory |
-| **Data engineering** | Robust file parsing across CSV/Excel/PDF/JSON with automatic header and encoding repair |
+| **Agentic AI / LLM orchestration** | 7 AI agents working together in a LangGraph pipeline, each with one job |
+| **Self-correcting AI systems** | A dedicated Critic agent that can reject or send back any AI-generated result |
+| **Reliability engineering** | Automatic failover across 4 AI providers, usage limits, and safe fallback behavior instead of crashes |
+| **Secure code execution** | AI-generated code is checked line by line, then run in an isolated sandbox |
+| **Full-stack development** | React frontend, Python backend, PDF generation, and a memory system for chat |
+| **Data engineering** | Reliable file parsing for CSV, Excel, PDF, and JSON, even when files are messy |
 
 ## Key Features
 
-- **Zero-config ingestion** — CSV, Excel, PDF tables, and JSON; broken headers and bad encodings are auto-repaired before anything else runs.
-- **Self-cleaning data** — an LLM-written cleaning script fixes nulls, duplicates, and types, and retries itself on failure.
-- **Adaptive analysis** — each question is generated based on what's already been found, not a fixed checklist, and the agent stops itself once there's nothing new to ask.
-- **Independent critique** — a Critic agent grades every insight (`accept` / `weak_accept` / `regenerate` / `skip`) before it's shown to the user.
-- **Sandboxed execution** — every generated script is AST-validated, then run in an isolated, timeboxed subprocess.
-- **Resilient by design** — Groq → Cerebras → DeepSeek → Gemini failover plus a hard per-run LLM budget mean the pipeline degrades gracefully instead of crashing.
-- **Live follow-up chat** — ask ad-hoc questions after the report is generated, answered by the same pipeline with session memory via ChromaDB.
-- **One-click PDF export** — full report with findings, charts, confidence flags, and pipeline diagnostics via ReportLab.
+- **Works with any file** — CSV, Excel, PDF tables, or JSON. Broken headers and odd encodings are fixed automatically.
+- **Cleans its own data** — writes and runs its own cleanup code, and fixes it if that code fails.
+- **Asks smart questions** — each question builds on what's already been found, not a fixed checklist. It stops once there's nothing new to ask.
+- **Double-checks itself** — a second AI agent grades every result (accept, weak accept, redo, or skip) before showing it to you.
+- **Runs code safely** — every script is scanned for risky code, then run in an isolated sandbox with a time limit.
+- **Keeps working when things fail** — if one AI provider is down, it automatically tries the next one, and there's a hard limit on usage so it never runs away.
+- **Answers follow-up questions live** — chat with your data after the report is done; it remembers context from earlier in the session.
+- **Exports a full PDF report** — findings, charts, confidence levels, and a summary of what worked and what didn't.
 
 ## Architecture
 
 ![AnalystAI system architecture](docs/architecture.png)
 
-Seven single-responsibility agents, coordinated by a LangGraph state machine: **Ingestion → Cleaner → Profiler → Analyst ⇄ Critic → Visualizer → Narrator**, backed by a sandboxed code-execution engine, a multi-provider LLM layer, and ChromaDB session memory.
+Seven agents, each with one job, run in this order: **Ingestion → Cleaner → Profiler → Analyst ⇄ Critic → Visualizer → Narrator**. A sandboxed code runner, a shared AI provider layer, and a memory system support all of them.
 
 ## How It Works
 
-1. **Ingestion** parses the file (with header repair and encoding fallback) and generates a schema and natural-language description.
-2. **Cleaner** writes and runs Pandas code to fix nulls, duplicates, and types, retrying on failure.
-3. **Profiler** computes deterministic statistics, correlations, and data-quality flags, no LLM call needed.
-4. **Analyst** generates one adaptive question at a time, filters out trivial or overly complex ones, writes analysis code, and runs it in the sandbox.
-5. **Critic** independently reviews every executed insight and can force a retry (`regenerate`) or drop it (`skip`) rather than trusting execution success alone.
-6. **Visualizer** picks a chart or table per insight and renders it, with a deterministic fallback if none was produced.
-7. **Narrator** writes the executive summary, explicitly flagging any low-confidence findings.
-8. The **chat interface** routes follow-up questions through the same Analyst → Critic → sandbox loop, using ChromaDB for context.
+1. **Ingestion** reads the file, fixes broken headers or encodings, and writes a short description of what the data contains.
+2. **Cleaner** writes and runs code to fix missing values, duplicates, and data types, retrying if something breaks.
+3. **Profiler** calculates basic statistics and flags data quality issues. No AI call needed here, it's pure math.
+4. **Analyst** comes up with one good question at a time, writes code to answer it, and runs that code safely.
+5. **Critic** checks the Analyst's answer independently, and can send it back for a redo or drop it if it's not useful.
+6. **Visualizer** turns each accepted answer into a chart or table, whichever fits the data better.
+7. **Narrator** writes the final summary in plain English, and says clearly when a finding isn't fully certain.
+8. The **chat** sends any follow-up question through the same steps, using memory from earlier in the session.
 
 ## Tech Stack
 
 | Layer | Technology | Why |
 |---|---|---|
-| Agent orchestration | LangGraph | State-machine pipeline with conditional routing and built-in retry semantics |
-| LLM providers | Groq, Cerebras, DeepSeek, Google Gemini | Cascading failover so one provider's outage doesn't stall the pipeline |
-| Code execution | Python `subprocess` sandbox | Agent-written Pandas/Plotly code runs isolated, with a timeout |
-| Static safety check | Python `ast` module | Blocks disallowed imports/calls before a single line executes |
-| Data parsing | Pandas, openpyxl, PyMuPDF | CSV, Excel, and PDF-table extraction with header repair |
-| Structured outputs | Pydantic | Agent-to-agent handoffs are schema-validated, not raw JSON |
-| Charts | Plotly | Interactive in the dashboard, static in the PDF |
-| Session memory | ChromaDB (local) | Per-session vector store for chat follow-up context |
-| PDF export | ReportLab | Assembles the final downloadable report |
-| Frontend | React + Vite + Tailwind CSS | Dashboard, chat, history, and export UI |
+| Agent orchestration | LangGraph | Runs the agents in order and handles retries automatically |
+| AI providers | Groq, Cerebras, DeepSeek, Google Gemini | If one is slow or down, it switches to the next |
+| Code execution | Python `subprocess` sandbox | Runs AI-written code safely, in isolation, with a time limit |
+| Code safety check | Python `ast` module | Scans code for risky commands before it ever runs |
+| File parsing | Pandas, openpyxl, PyMuPDF | Reads CSV, Excel, and PDF tables, even messy ones |
+| Data validation | Pydantic | Makes sure data passed between agents is in the expected shape |
+| Charts | Plotly | Interactive on the dashboard, static in the PDF |
+| Chat memory | ChromaDB (local) | Remembers earlier questions in the same session |
+| PDF export | ReportLab | Builds the final downloadable report |
+| Frontend | React + Vite + Tailwind CSS | Dashboard, chat, history, and export screens |
 
 ## Project Structure
 
 ```
 analystai/
 ├── agents/
-│   ├── ingestion.py       # Schema profiling + dataset description
-│   ├── cleaner.py         # Self-correcting data cleaning loop
-│   ├── profiler.py        # Deterministic statistical profiling
-│   ├── analyst.py         # Adaptive question generation + code execution
-│   ├── critic.py          # Independent verdict on every insight
-│   ├── visualizer.py      # Chart-vs-table decisioning
-│   └── narrator.py        # Executive summary generation
+│   ├── ingestion.py       # Reads the file and describes the dataset
+│   ├── cleaner.py         # Cleans the data, retries itself on failure
+│   ├── profiler.py        # Calculates statistics and data quality flags
+│   ├── analyst.py         # Comes up with questions and answers them with code
+│   ├── critic.py          # Double-checks every answer the Analyst gives
+│   ├── visualizer.py      # Decides chart vs. table and renders it
+│   └── narrator.py        # Writes the plain-English summary
 ├── orchestrator/
-│   ├── graph.py           # LangGraph pipeline definition
-│   └── utils.py           # Shared, budget-aware LLM call wrapper
+│   ├── graph.py           # Defines the agent pipeline
+│   └── utils.py           # Shared helper for making AI calls safely
 ├── sandbox/
-│   ├── executor.py        # Isolated subprocess code execution
-│   └── validator.py       # AST-based static safety checks
+│   ├── executor.py        # Runs AI-written code in isolation
+│   └── validator.py       # Scans code for risky commands before running it
 ├── utils/
-│   ├── file_reader.py     # Smart multi-format, multi-encoding file reader
-│   └── llm_utils.py       # Multi-provider LLM abstraction + failover
+│   ├── file_reader.py     # Reads and repairs CSV/Excel/PDF/JSON files
+│   └── llm_utils.py       # Talks to the AI providers, with automatic failover
 ├── memory/
-│   └── chroma_store.py    # Session-scoped vector memory
+│   └── chroma_store.py    # Remembers context for the chat feature
 ├── output/
-│   └── pdf_export.py      # ReportLab PDF report builder
-├── frontend/               # React + Vite + Tailwind CSS app
-│   └── src/components/     # Dashboard, chat, upload, export, history, etc.
-├── config.py               # Provider chains, budgets, retry limits
-├── models.py                # Pydantic schemas for agent outputs
-├── server.py                 # API entry point
+│   └── pdf_export.py      # Builds the final PDF report
+├── frontend/               # React + Vite + Tailwind app
+│   └── src/components/     # Dashboard, chat, upload, export, history screens
+├── config.py               # Settings: usage limits, retries, provider order
+├── models.py                # Defines the expected shape of agent outputs
+├── server.py                 # Starts the backend
 └── docs/
     ├── architecture.png
     └── screenshots/
@@ -124,11 +124,11 @@ analystai/
 
 ## Getting Started
 
-### Prerequisites
+### What you'll need
 
-- Python 3.11+
+- Python 3.11 or newer
 - Node.js 18+ and npm
-- An API key for at least one of: Groq, Cerebras, DeepSeek, Google Gemini
+- At least one API key from: Groq, Cerebras, DeepSeek, or Google Gemini
 
 ### Backend
 
@@ -141,7 +141,7 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 
-cp .env.example .env            # then fill in your API keys
+cp .env.example .env            # add your API keys here
 python server.py
 ```
 
@@ -153,7 +153,7 @@ npm install
 npm run dev
 ```
 
-The frontend runs at `http://localhost:5173` and talks to the backend started above.
+The app runs at `http://localhost:5173` and connects to the backend you started above.
 
 ## Environment Variables
 
@@ -164,44 +164,44 @@ DEEPSEEK_API_KEY=your_deepseek_key_here
 GEMINI_API_KEY=your_gemini_key_here
 ```
 
-You don't need all four; the failover chain skips any provider whose key is missing or invalid. At least one working key is required.
+You don't need all four keys. If one is missing, the app just skips it and uses the next one. You need at least one working key.
 
 ## Configuration
 
-Tunable limits live in `config.py`:
+These settings live in `config.py`:
 
-| Setting | Default | Meaning |
+| Setting | Default | What it does |
 |---|---|---|
-| `MAX_LLM_CALLS_PER_RUN` | 25 | Hard budget on LLM calls per analysis run |
-| `MAX_ANALYST_QUESTIONS` | 3 | Questions the Analyst agent asks per dataset |
-| `MAX_ANALYST_RETRIES` | 2 | Retry attempts per question before it's marked low-confidence |
-| `MAX_LLM_RETRIES` | 5 | Retries per provider before failing over to the next one |
-| `LIGHT_CHAIN` / `HEAVY_CHAIN` | see `config.py` | Provider order for light agents (ingestion, cleaning, narration) vs. heavy reasoning (analysis, critique) |
+| `MAX_LLM_CALLS_PER_RUN` | 25 | Caps how many AI calls one analysis can use |
+| `MAX_ANALYST_QUESTIONS` | 3 | How many questions the Analyst asks per dataset |
+| `MAX_ANALYST_RETRIES` | 2 | How many times a question can be retried before giving up |
+| `MAX_LLM_RETRIES` | 5 | Retries per AI provider before switching to the next one |
+| `LIGHT_CHAIN` / `HEAVY_CHAIN` | see `config.py` | Which AI providers handle simple vs. more demanding tasks |
 
 ## Safety and Sandboxing
 
-Every piece of LLM-generated code passes two independent checks before it runs:
+Every piece of AI-generated code goes through two checks before it runs:
 
-- **Static (AST-based):** parsed and walked for disallowed imports (`os`, `subprocess`, `socket`, `sys`) and unsafe calls (`eval`, `exec`, `__import__`) before execution.
-- **Dynamic (sandboxed subprocess):** validated code runs as an isolated OS process with a 30-second timeout and forced UTF-8 encoding, never `eval()`/`exec()` in the main server process.
+- **A static scan:** the code is checked for risky commands, like file access or system calls, before it's allowed to run at all.
+- **A sandboxed run:** approved code runs in its own isolated process, with a 30-second time limit, so it can never affect the main app.
 
 ## Known Limitations
 
-- Reliability is bounded by the underlying LLM providers; retrying can't rescue a question that genuinely exceeds the model's reasoning ability.
-- The Critic agent is itself an LLM call and can occasionally misjudge a verdict.
-- The sandbox's 30-second timeout may be too short for very large datasets.
-- PDF-table extraction requires genuinely extractable text; scanned/image-based PDFs aren't supported.
+- The system is only as good as the AI providers behind it. Retrying doesn't fix a question that's genuinely too hard for the model.
+- The Critic is also an AI agent, so it can occasionally get a judgment call wrong.
+- The 30-second time limit may be too short for very large datasets.
+- PDF tables need to have real, readable text. Scanned or image-based PDFs won't work.
 
 ## Roadmap
 
-- [ ] Extend the Critic to check statistical validity (sample size, confounders), not just logical correctness.
-- [ ] Allow multi-round Analyst/Critic negotiation instead of a fixed retry count.
-- [ ] Cache results by (dataset fingerprint, question) to avoid re-spending LLM budget on repeat uploads.
-- [ ] Formal accuracy/latency benchmarking against a human-analyst baseline.
+- [ ] Have the Critic check statistical validity, not just whether the logic makes sense.
+- [ ] Let the Analyst and Critic go back and forth more than once on a tricky question.
+- [ ] Cache results so re-uploading the same file doesn't waste AI usage.
+- [ ] Benchmark AnalystAI's accuracy and speed against a human analyst.
 
 ## About the Author
 
-Built by **Sonakshi Puri**, ECE undergraduate. This project explores how far a self-correcting, multi-agent architecture can be pushed for autonomous data analysis, and gets hands-on with the agentic AI patterns (ReAct loops, multi-agent orchestration, LLM-generated code execution) that are increasingly central to production AI systems.
+Built by **Sonakshi Puri**, ECE undergraduate. This project was built to see how far a self-checking, multi-agent system could go for automated data analysis, and to get real, hands-on experience with the kind of AI agent design that's becoming central to production AI systems.
 
 - GitHub: [your-github-handle](#)
 - LinkedIn: [your-linkedin](#)
