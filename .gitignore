@@ -1,0 +1,51 @@
+# --- Environment & Secrets ---
+.env
+.env.local
+.env.production
+
+# --- Python ---
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+db.sqlite3
+*.pkl
+*.h5
+*.pt
+*.pth
+
+# --- Node.js / Frontend ---
+node_modules/
+dist/
+build/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- AI / ML Specific ---
+chroma_store/
+wandb/
+mlruns/
+.DS_Store
+
+# --- Editors & OS ---
+.vscode/
+.idea/
+*.log
+Thumbs.db
+.DS_Store
+
+# --- Project Specific ---
+cmd.txt

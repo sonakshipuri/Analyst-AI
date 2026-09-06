@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme (default). Values are "R G B" (no commas, no #) so
+       Tailwind's rgb(var(--x) / <alpha-value>) opacity modifiers work
+       on every existing bg-, text-, and border- class with a /[0.XX]
+       opacity suffix that's already in use across the components. */
+    --c-page: 247 245 241;        /* ivory — page background */
+    --c-paper: 255 255 255;       /* card surface */
+    --c-subtle: 238 235 228;      /* quiet neutral fill */
+    --c-neutral: 228 224 216;     /* button/badge neutral */
+    --c-neutral-deep: 87 82 74;
+    --c-neutral2: 233 230 223;
+    --c-neutral2-deep: 74 69 60;
+    --c-ink: 22 20 18;            /* primary text */
+    --c-ink-soft: 107 98 88;      /* secondary text */
+    --c-rust: 139 58 47;          /* accent */
+  }
+
+  .dark {
+    /* Not hand-picked -- mechanically derived from the light values above
+       by flipping HSL lightness while keeping hue/saturation the same.
+       This is why paper (card) is darker than page here: in light mode
+       paper (pure white) is the MORE extreme value versus page (cream),
+       so its flip is the more extreme dark value too (near-black, darker
+       than the page) -- the same relationship, mirrored, not redesigned. */
+    --c-page: 14 12 8;
+    --c-paper: 0 0 0;
+    --c-subtle: 27 24 17;
+    --c-neutral: 39 35 27;
+    --c-neutral-deep: 181 176 168;
+    --c-neutral2: 32 29 22;
+    --c-neutral2-deep: 195 190 181;
+    --c-ink: 237 235 233;
+    --c-ink-soft: 204 199 193;
+    --c-rust: 208 127 116;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply font-body text-ink antialiased transition-theme duration-200;
+    background-color: rgb(var(--c-page));
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+  ::selection {
+    background: rgb(var(--c-ink));
+    color: rgb(var(--c-page));
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-rust));
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* The signature surface: flat card, 1px hairline edge. No blur, no shadow. */
+  .glass {
+    @apply bg-paper border border-ink/[0.10] transition-theme duration-200;
+  }
+  .glass-strong {
+    @apply bg-paper border border-ink/[0.12] transition-theme duration-200;
+  }
+  /* Deliberately NOT theme-dependent: this is "the one dark panel on the
+     page" in light mode, and needs to stay visibly darker than the page
+     background in dark mode too, or it disappears into it. Fixed at a
+     near-black regardless of theme. */
+  .glass-dark {
+    background: #000000;
+    @apply border border-white/[0.08];
+  }
+
+  /* Upload-screen-only background treatment: a fine graph-paper grid.
+     Scoped to this one class so it never leaks onto the dashboard,
+     history, or any other screen. Applied as a direct background-image
+     (not a z-index'd pseudo-element) -- an element's own background
+     always paints behind its own content, so this needs no stacking
+     tricks to render correctly. Uses currentColor-independent fixed
+     ink-ish rgba so it stays visible (faintly) in both themes. */
+  .upload-grid {
+    background-image:
+      linear-gradient(rgba(128, 122, 114, 0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(128, 122, 114, 0.10) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* latte-field previously drew two large blurred gradient circles behind hero/panels.
+     Removed per request — kept as a no-op class so components using it don't break. */
+  .latte-field {
+    position: relative;
+  }
+  .latte-field::before,
+  .latte-field::after {
+    content: none;
+  }
+  .latte-field-accent {
+    display: none;
+  }
+
+  /* Confidence / signal bar — kept in CSS in case it's reused elsewhere,
+     but no longer rendered in InsightCard. */
+  .signal-bar {
+    @apply relative h-1.5 w-full rounded-full bg-ink/[0.06] overflow-hidden;
+  }
+  .signal-bar > span {
+    @apply absolute inset-y-0 left-0 rounded-full bg-rust;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors;
+  }
+
+  .btn-primary {
+    @apply pill bg-ink text-ivory hover:opacity-85;
+  }
+  .btn-accent {
+    @apply pill bg-ink text-ivory hover:bg-rust;
+  }
+  .btn-ghost {
+    @apply pill bg-transparent text-ink-soft hover:text-ink border border-ink/[0.12] hover:border-ink/[0.30];
+  }
+
+  /* Theme toggle button — sun/moon switch in the nav */
+  .theme-toggle {
+    @apply flex h-8 w-8 items-center justify-center rounded-full border border-ink/[0.14] text-ink-soft transition-colors hover:text-ink hover:border-ink/[0.30];
+  }
+
+  .card {
+    @apply glass rounded-4xl p-6;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.14em] uppercase text-ink-soft/70;
+  }
+
+  /* Styling for react-markdown output — bold labels, bullet lists, tight paragraph spacing */
+  .rich-text p {
+    @apply mb-2 last:mb-0;
+  }
+  .rich-text strong {
+    @apply font-semibold text-ink;
+  }
+  .rich-text ul {
+    @apply my-1 space-y-1.5 pl-0 list-none;
+  }
+  .rich-text ul li {
+    @apply relative pl-4;
+  }
+  .rich-text ul li::before {
+    content: "";
+    @apply absolute left-0 top-[0.55em] h-1 w-1 rounded-full bg-ink/40;
+  }
+  .rich-text ol {
+    @apply my-1 list-decimal space-y-1.5 pl-5;
+  }
+  .rich-text a {
+    @apply text-rust underline underline-offset-2;
+  }
+  .rich-text code {
+    @apply rounded bg-ink/[0.06] px-1 py-0.5 text-[0.9em];
+  }
+  .rich-text table {
+    @apply my-3 w-full border-collapse overflow-hidden rounded-xl border border-ink/[0.10] text-left text-[13px];
+  }
+  .rich-text th {
+    @apply border-b border-ink/[0.10] bg-ink/[0.03] px-3 py-2 font-semibold text-ink;
+  }
+  .rich-text td {
+    @apply border-b border-ink/[0.06] px-3 py-2 align-top text-ink-soft last:border-b-0;
+  }
+  .rich-text tr:last-child td {
+    @apply border-b-0;
+  }
+
+  /* Text rendered on top of .glass-dark, which is ALWAYS a near-black
+     panel regardless of theme. This must use a fixed light color
+     (contrastFg), not the ink/ivory tokens -- those flip with the theme,
+     and "text-ivory" would turn near-black-on-near-black in dark mode. */
+  .rich-text-dark table {
+    @apply border-white/[0.14];
+  }
+  .rich-text-dark th {
+    @apply border-white/[0.14] bg-white/[0.06] text-contrastFg;
+  }
+  .rich-text-dark td {
+    @apply border-white/[0.08] text-contrastFg/70;
+  }
+  .rich-text-dark strong {
+    @apply text-contrastFg;
+  }
+  .rich-text-dark ul li::before {
+    @apply bg-contrastFg/50;
+  }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise {
+  animation: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise { animation: none; }
+}
